@@ -11,66 +11,79 @@ function useStreamingChat() {
     }
   ]);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [currentStream, setCurrentStream] = useState('');
+  // const [currentStream, setCurrentStream] = useState('');
+  const [error, setError] = useState(null);
 
-  const simulateStreamingResponse = useCallback(async (userMessage) => {
-    let response = '';
-    const lower = userMessage.toLowerCase();
-
-    if (lower.includes('nọc nạng') || lower.includes('noc nang')) {
-      response =
-        'Di tích lịch sử Nọc Nạng tọa lạc tại ấp 4, xã Phong Thạnh A, thị xã Giá Rai, tỉnh Bạc Liêu. ' +
-        'Nơi đây được Bộ Văn hóa, Thể thao và Du lịch công nhận là Di tích Lịch sử – Văn hóa cấp Quốc gia ' +
-        'vào ngày 30/8/1991. Di tích gắn liền với cuộc đấu tranh kiên cường của gia đình nông dân Mười Chức ' +
-        'năm 1928 chống lại sự áp bức, bóc lột tàn bạo của bọn địa chủ và thực dân, gây tiếng vang lớn khắp ' +
-        'lục tỉnh Nam Kỳ thời bấy giờ.';
-    }
-    else if (lower.includes('mười chức') || lower.includes('muoi chuc')) {
-      response =
-        'Ông Mười Chức, tên thật là Nguyễn Văn Chức, là người nông dân tiêu biểu trong sự kiện lịch sử ' +
-        'Nọc Nạng năm 1928. Cùng với đại gia đình, ông đã anh dũng đứng lên bảo vệ hạt lúa, thửa ruộng ' +
-        'trước sự đàn áp dã man của bọn địa chủ thực dân. Cuộc đấu tranh đẫm máu ấy đã trở thành biểu tượng ' +
-        'cho tinh thần quật khởi, bất khuất của người nông dân Nam Bộ trước khi Đảng Cộng sản Việt Nam ra đời.';
-    }
-    else if (lower.includes('lễ hội') || lower.includes('dấu ấn')) {
-      response =
-        'Hằng năm, vào ngày 25 tháng Giêng âm lịch, tại Di tích lịch sử Nọc Nạng diễn ra lễ hội ' +
-        '“Dấu ấn Đồng Nọc Nạng”. Lễ hội được tổ chức trang nghiêm nhằm tưởng nhớ công lao và tinh thần ' +
-        'đấu tranh kiên trung của các bậc tiền nhân đã ngã xuống vì hạt lúa, thửa ruộng. ' +
-        'Sự kiện thu hút đông đảo người dân và du khách đến dâng hương, tri ân và tìm về cội nguồn lịch sử.';
-    }
-    else if (lower.includes('giá rai')) {
-      response =
-        'Thị xã Giá Rai, tỉnh Bạc Liêu là nơi diễn ra sự kiện lịch sử Nọc Nạng năm 1928. ' +
-        'Sau sự kiện, khu di tích đã được xây dựng và trùng tu nhiều lần, đặc biệt là đợt mở rộng ' +
-        'năm 2008 nhân kỷ niệm 80 năm sự kiện. Hiện nay, khu di tích có diện tích hơn 3 ha với nhiều hạng mục ' +
-        'như khu mộ gia đình Mười Chức, nhà trưng bày và cụm tượng tái hiện cuộc đấu tranh lịch sử.';
-    }
-    else {
-      response =
-        'Tôi là trợ lý AI hỗ trợ tìm hiểu di sản văn hóa địa phương tỉnh Cà Mau và khu vực Nam Bộ. ' +
-        'Bạn có thể hỏi tôi về Di tích lịch sử Nọc Nạng, sự kiện Mười Chức năm 1928, lễ hội “Dấu ấn Đồng Nọc Nạng” ' +
-        'hoặc các giá trị lịch sử – văn hóa gắn với vùng đất Giá Rai.';
-    }
-
-    // Streaming giả lập
+  const streamFromBackend = useCallback(async (userMessage) => {
     setIsStreaming(true);
-    setCurrentStream('');
-
-    for (let i = 0; i < response.length; i++) {
-      await new Promise(resolve => setTimeout(resolve, 15));
-      setCurrentStream(response.slice(0, i + 1));
-    }
+    // setCurrentStream('');
+    setError(null);
 
     setMessages(prev => [
       ...prev,
-      { role: 'assistant', content: response }
+      { role: 'assistant', content: '' }
     ]);
 
-    setCurrentStream('');
-    setIsStreaming(false);
-  }, []);
+    try {
+      const response = await fetch('http://localhost:8000/chat/stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: userMessage
+        })
+      });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullResponse = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+
+
+        setMessages(prev => {
+          const updated = [...prev];
+          updated[updated.length - 1] = {
+            ...updated[updated.length - 1],
+            content: updated[updated.length - 1].content + chunk
+          };
+          return updated;
+        });
+        // fullResponse += chunk;
+        // setCurrentStream(chunk);
+      }
+
+      // Add complete response to messages
+      // setMessages(prev => [
+      //   ...prev,
+      //   { role: 'assistant', content: fullResponse }
+      // ]);
+
+      // setCurrentStream('');
+    } catch (err) {
+      console.error('Streaming error:', err);
+      setError(err.message);
+
+      // Add error message
+      const errorMessage = 'Xin lỗi, đã có lỗi xảy ra khi kết nối với server. Vui lòng thử lại sau.';
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: errorMessage }
+      ]);
+    } finally {
+      setIsStreaming(false);
+      // setCurrentStream('');
+    }
+  }, []);
 
   const sendMessage = useCallback(async (text) => {
     if (!text.trim()) return;
@@ -81,12 +94,15 @@ function useStreamingChat() {
       content: text
     }]);
 
-    // Simulate API call with streaming
-    await simulateStreamingResponse(text);
-  }, [simulateStreamingResponse]);
+    // Stream response from backend
+    await streamFromBackend(text);
+  }, [streamFromBackend]);
 
-  return { messages, isStreaming, currentStream, sendMessage };
+  return { messages, isStreaming, sendMessage, error };
 }
+
+
+
 
 // Message Bubble Component
 function MessageBubble({ message, isStreaming = false }) {
@@ -95,10 +111,10 @@ function MessageBubble({ message, isStreaming = false }) {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${isUser
-          ? 'bg-red-600 text-white rounded-br-none'
-          : 'bg-gray-100 text-gray-800 rounded-bl-none'
+        ? 'bg-red-600 text-white rounded-br-none'
+        : 'bg-gray-100 text-gray-800 rounded-bl-none'
         }`}>
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">
+        <p className="text-sm leading-relaxed whitespace-pre-wrap text-start">
           {message.content}
           {isStreaming && <span className="inline-block w-2 h-4 ml-1 bg-gray-400 animate-pulse"></span>}
         </p>
@@ -135,7 +151,7 @@ function SuggestedQuestions({ onQuestionClick, disabled }) {
 
 // Chat Window Component
 function ChatWindow() {
-  const { messages, isStreaming, currentStream, sendMessage } = useStreamingChat();
+  const { messages, isStreaming, sendMessage } = useStreamingChat();
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
@@ -167,7 +183,7 @@ function ChatWindow() {
       <div className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-4 flex items-center gap-3">
         <MessageSquare className="w-6 h-6" />
         <div>
-          <h2 className="font-semibold text-lg">Trợ lý Di sản Văn hóa</h2>
+          <h2 className="font-semibold text-lg">Trợ lý di sản AI</h2>
           <p className="text-xs text-red-100">Hỏi tôi về di sản văn hóa tỉnh Cà Mau</p>
         </div>
       </div>
@@ -179,16 +195,16 @@ function ChatWindow() {
         style={{ scrollBehavior: 'smooth' }}
       >
         {messages.map((msg, idx) => (
-          <MessageBubble key={idx} message={msg} />
+          <MessageBubble key={idx} message={msg} isStreaming={isStreaming && idx === messages.length - 1 && msg.role === 'assistant'} />
         ))}
 
         {/* Streaming Message */}
-        {isStreaming && currentStream && (
+        {/* {isStreaming && currentStream && (
           <MessageBubble
             message={{ role: 'assistant', content: currentStream }}
             isStreaming={true}
           />
-        )}
+        )} */}
 
         <div ref={messagesEndRef} />
       </div>
@@ -294,8 +310,8 @@ function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
             <button
               onClick={() => onNavigate('heritage')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${currentPage === 'heritage'
-                  ? 'bg-red-50 text-red-700'
-                  : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-red-50 text-red-700'
+                : 'text-gray-700 hover:bg-gray-100'
                 }`}
             >
               <BookOpen className="w-5 h-5" />
@@ -304,8 +320,8 @@ function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
             <button
               onClick={() => onNavigate('chat')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${currentPage === 'chat'
-                  ? 'bg-red-50 text-red-700'
-                  : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-red-50 text-red-700'
+                : 'text-gray-700 hover:bg-gray-100'
                 }`}
             >
               <MessageSquare className="w-5 h-5" />
@@ -314,8 +330,8 @@ function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
             <button
               onClick={() => onNavigate('quiz')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${currentPage === 'quiz'
-                  ? 'bg-red-50 text-red-700'
-                  : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-red-50 text-red-700'
+                : 'text-gray-700 hover:bg-gray-100'
                 }`}
             >
               <HelpCircle className="w-5 h-5" />
@@ -547,8 +563,8 @@ function HeritageFilter({ activeFilter, onFilterChange, viewMode, onViewModeChan
               key={filter.id}
               onClick={() => onFilterChange(filter.id)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === filter.id
-                  ? 'bg-red-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
               <span className="mr-2">{filter.icon}</span>
@@ -749,24 +765,6 @@ function ChatPage() {
 
       <div className="h-[600px]">
         <ChatWindow />
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-4 mt-8">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="text-4xl mb-2">🏛️</div>
-          <h3 className="font-semibold text-gray-800 mb-2">Cà Mau</h3>
-          <p className="text-sm text-gray-600">Văn hóa</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="text-4xl mb-2">🤖</div>
-          <h3 className="font-semibold text-gray-800 mb-2">AI Chatbot</h3>
-          <p className="text-sm text-gray-600">Streaming response</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="text-4xl mb-2">📚</div>
-          <h3 className="font-semibold text-gray-800 mb-2">RAG System</h3>
-          <p className="text-sm text-gray-600">Thông tin chính xác</p>
-        </div>
       </div>
     </div>
   );
