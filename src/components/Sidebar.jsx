@@ -58,18 +58,9 @@ export function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
                 }`}
             >
               <HelpCircle className="w-5 h-5" />
-              <span>Làm bài kiểm tra</span>
+              <span>Hỏi xoay đáp xoáy</span>
             </button>
           </nav>
-
-          <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h3 className="font-semibold text-yellow-900 mb-2">💡 Mẹo</h3>
-            <p className="text-sm text-yellow-800">
-              {currentPage === 'heritage'
-                ? 'Click vào từng di sản để xem thông tin chi tiết!'
-                : 'Hãy thử hỏi chatbot về bất kỳ di sản văn hóa nào của Cà Mau!'}
-            </p>
-          </div>
         </div>
       </aside>
     </>

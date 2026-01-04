@@ -1,11 +1,11 @@
-import { HERITAGE_DATA } from './data/heritages';
-import { PEOPLE_DATA } from './data/people';
-import { FESTIVAL_DATA } from './data/festivals';
+import { HERITAGE_DATA } from '../data/heritages';
+import { PEOPLE_DATA } from '../data/people';
+import { FESTIVAL_DATA } from '../data/festivals';
 
 import { useState } from 'react';
-import { HeritageFilter } from './Filter';
-import { HeritageCard } from './HeritageCard';
-import { HeritageListItem } from './HeritageItem';
+import { HeritageFilter } from '../Filter';
+import { HeritageCard } from '../components/HeritageCard';
+import { HeritageListItem } from '../components/HeritageItem';
 
 export function HeritageListPage() {
   const [filter, setFilter] = useState('all');
@@ -36,12 +36,6 @@ export function HeritageListPage() {
     <div>
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-red-600 to-yellow-500 rounded-2xl p-8 mb-6 text-white shadow-xl">
-        <h2 className="text-3xl font-bold mb-3">
-          Di sản Văn hóa, Nhân vật & Lễ hội tỉnh Cà Mau
-        </h2>
-        <p className="text-lg opacity-90 mb-4">
-          Khám phá di sản văn hóa, nhân vật lịch sử và lễ hội truyền thống tỉnh Cà Mau
-        </p>
 
         {/* Search Bar */}
         <div className="relative max-w-xl">
