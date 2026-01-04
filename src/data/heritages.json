@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Di tích căn cứ Cái Chanh",
+    "address": "Ấp Cây Cui, xã Ninh Thạnh Lợi, tỉnh Cà Mau",
+    "yearRanked": 2011,
+    "rankingType": "Quốc gia đặc biệt",
+    "yearBuilt": 1949,
+    "information": "https://docs.google.com/document/d/1_UMQrpvm7QTsH8AcOFR_25IHpwGN7SfyoRFxSNIoJHo",
+    "notes": "Di tích Quốc gia Đặc biệt",
+    "audioFile": "Căn cứ Cái Chanh.wav",
+    "image": "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&q=80"
+  },
+  {
+    "id": 2,
+    "name": "Đền thờ Trần Quang Diệu",
+    "address": "Ấp 1A, xã Phong Hiệp, tỉnh Cà Mau",
+    "yearRanked": 2000,
+    "rankingType": "Cấp tỉnh",
+    "yearBuilt": 1917,
+    "information": "https://docs.google.com/document/d/1V3YKkV4qW1EATiu7_H4hXT-mxXiePRbROezjuFbgGTs/edit?usp=drive_link",
+    "notes": "Di tích Lịch sử - Văn hóa cấp Tỉnh",
+    "audioFile": "Đền thờ Trần Quang Diệu.wav",
+    "image": "https://images.unsplash.com/photo-1528127269322-539801943592?w=800&q=80"
+  },
+  {
+    "id": 3,
+    "name": "Di tích chùa KosThum",
+    "address": "Ấp KosThum, Xã Ninh Thanh Lợi, Tỉnh Cà Mau",
+    "yearRanked": 2000,
+    "rankingType": "Quốc gia",
+    "yearBuilt": 1832,
+    "information": "https://www.perplexity.ai/search/tim-cho-toi-toan-bo-thong-tin-0dOq3nXnQtO3QO8Gzw570g#0",
+    "notes": "Di tích Lịch sử - Văn hóa cấp Quốc gia",
+    "audioFile": "Chùa Costhum.wav",
+    "image": "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800&q=80"
+  },
+  {
+    "id": 4,
+    "name": "Làng nghề đan đát truyền thống ấp Mỹ I",
+    "address": "Ấp Mỹ I, xã Phước Long, tỉnh Cà Mau",
+    "yearRanked": 2009,
+    "rankingType": "Cấp tỉnh",
+    "yearBuilt": null,
+    "information": "https://www.perplexity.ai/search/tim-cho-toi-toan-bo-thong-tin-Nu0yhyQuQI6x_Sip4upo8Q#0",
+    "notes": "Di sản Văn hóa Phi vật thể (Làng nghề)",
+    "audioFile": "LÀNG NGHỀ ĐAN ĐÁT TRUYỀN THỐNG ẤP MỸ I.wav",
+    "image": "https://images.unsplash.com/photo-1591768575886-02080a57a6bc?w=800&q=80"
+  }
+]

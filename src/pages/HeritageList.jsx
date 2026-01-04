@@ -1,32 +1,30 @@
 import { useState, useMemo } from 'react';
 import { Search, Grid, List, MapPin, Calendar, Landmark, X } from 'lucide-react';
-import { HERITAGE_DATA } from '../data/heritages';
+import heritageData from '../data/heritages.json' with {"type": "json"}
 import { PEOPLE_DATA } from '../data/people';
 import { FESTIVAL_DATA } from '../data/festivals';
 
 import { HeritageCard } from '../components/HeritageCard'
 import { HeritageListItem } from '../components/HeritageItem';
 import { HeritageDetailModal } from '../components/Detail';
-// Danh sách 64 xã/phường của tỉnh Cà Mau mới (sau sắp nhập 2025)
-const COMMUNES = [
-  // 55 Xã
-  'Xã Tân Thuận', 'Xã Tân Tiến', 'Xã Tạ An Khương', 'Xã Trần Phán', 'Xã Thanh Tùng',
-  'Xã Đầm Dơi', 'Xã Quách Phẩm', 'Xã U Minh', 'Xã Nguyễn Phích', 'Xã Khánh Lâm',
-  'Xã Khánh An', 'Xã Phan Ngọc Hiển', 'Xã Đất Mũi', 'Xã Tân Ân', 'Xã Khánh Bình',
-  'Xã Đá Bạc', 'Xã Khánh Hưng', 'Xã Sông Đốc', 'Xã Trần Văn Thời', 'Xã Thới Bình',
-  'Xã Trí Phải', 'Xã Tân Lộc', 'Xã Biển Bạch', 'Xã Đất Mới', 'Xã Năm Căn',
-  'Xã Tam Giang', 'Xã Cái Đôi Vàm', 'Xã Nguyễn Việt Khái', 'Xã Phú Tân', 'Xã Phú Mỹ',
-  'Xã Lương Thế Trân', 'Xã Tân Hưng', 'Xã Hưng Mỹ', 'Xã Cái Nước', 'Xã Phong Thạnh',
-  'Xã Hồng Dân', 'Xã Vĩnh Lộc', 'Xã Ninh Thạnh Lợi', 'Xã Ninh Quới', 'Xã Gành Hào',
-  'Xã Định Thành', 'Xã An Trạch', 'Xã Long Điền', 'Xã Đông Hải', 'Xã Hoà Bình',
-  'Xã Vĩnh Mỹ', 'Xã Vĩnh Hậu', 'Xã Phước Long', 'Xã Vĩnh Phước', 'Xã Phong Hiệp',
-  'Xã Vĩnh Thanh', 'Xã Vĩnh Lợi', 'Xã Hưng Hội', 'Xã Châu Thới', 'Xã Hồ Thị Kỷ',
+import { COMMUNES } from '../data/communes';
 
-  // 9 Phường
-  'Phường Bạc Liêu', 'Phường Vĩnh Trạch', 'Phường Hiệp Thành', 'Phường Giá Rai',
-  'Phường Láng Tròn', 'Phường An Xuyên', 'Phường Lý Văn Lâm', 'Phường Tân Thành',
-  'Phường Hoà Thành'
-].sort();
+function normalizeHeritage(item) {
+  return {
+    id: Number(item.id),
+    name: item.name?.trim() ?? '',
+    address: item.address ?? '',
+    yearRanked: item.yearRanked ?? null,
+    rankingType: item.rankingType ?? 'Unknown',
+    yearBuilt: item.yearBuilt ?? null,
+    information: item.information ?? '',
+    notes: item.notes ?? '',
+    audioFile: item.audioFile ?? null,
+    image: item.image ?? null
+  };
+}
+
+const HERITAGE_DATA = heritageData.map(normalizeHeritage)
 
 export default function HeritageListPage() {
   const [typeFilter, setTypeFilter] = useState('all');
