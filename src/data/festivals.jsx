@@ -1,12 +1,7 @@
 export const FESTIVAL_DATA = [
-  {
-    id: 1,
-    name: 'Đờn ca Tài tử Nam Bộ',
-    location: 'Các tỉnh Nam Bộ',
-    type: 'Di sản văn hóa phi vật thể',
-    year: 2013,
-    description:
-      'Đờn ca Tài tử là loại hình âm nhạc truyền thống của Nam Bộ, được UNESCO ghi danh là Di sản văn hóa phi vật thể đại diện của nhân loại.',
-    category: 'intangible_heritage'
-  }
+  { id: 1, name: 'Lễ hội Chol Chnam Thmay', commune: 'Phường Bạc Liêu', type: 'festival', date: 'Tháng 4 âm lịch', description: 'Tết Khmer', image: '🎉' },
+  { id: 2, name: 'Lễ hội Nghinh Ông', commune: 'Xã Đất Mũi', type: 'festival', date: 'Tháng 8 âm lịch', description: 'Lễ hội cầu ngư', image: '⛵' },
+  { id: 3, name: 'Lễ hội Ok Om Bok', commune: 'Phường Hiệp Thành', type: 'festival', date: 'Rằm tháng 10 âm lịch', description: 'Tế trăng Khmer', image: '🌙' },
+  { id: 4, name: 'Lễ hội Đua ghe Ngo', commune: 'Xã Tam Giang', type: 'festival', date: 'Tháng 9-10 âm lịch', description: 'Đua thuyền truyền thống', image: '🚣' },
 ];
+

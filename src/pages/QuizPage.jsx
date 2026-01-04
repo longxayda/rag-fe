@@ -77,13 +77,13 @@ export default function QuizPage() {
   }
 
   return (
-    <div className=" flex items-center justify-center">
+    <div className=" flex items-center justify-center p-3 sm:p-4 lg:p-6 xl:p-8 bg-gradient-to-br from-emerald-50 to-teal-50 ">
       <div className="max-w-3xl w-full">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             {/* <Sparkles className="w-8 h-8 text-emerald-600" /> */}
-            <h1 className="text-4xl font-bold text-gray-800">
+            <h1 className="text-4xl font-bold text-emerald-800">
               Hỏi Xoay Đáp Xoáy
             </h1>
             {/* <Sparkles className="w-8 h-8 text-teal-600" /> */}

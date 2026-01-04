@@ -1,40 +1,53 @@
-export function HeritageCard({ heritage, onClick }) {
-  const isPerson = heritage.dataType === 'people';
-  const isFestival = heritage.dataType === 'festival';
+import { Search, Grid, List, MapPin, Calendar, Landmark, X } from 'lucide-react';
+
+export function HeritageCard({ item, onClick }) {
+  const getTypeLabel = (type) => {
+    switch(type) {
+      case 'heritage': return 'Di sản';
+      case 'people': return 'Nhân vật';
+      case 'festival': return 'Lễ hội';
+      default: return '';
+    }
+  };
+
+  const getTypeColor = (type) => {
+    switch(type) {
+      case 'heritage': return 'bg-blue-100 text-blue-700';
+      case 'people': return 'bg-purple-100 text-purple-700';
+      case 'festival': return 'bg-orange-100 text-orange-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
 
   return (
-    <div
-      onClick={() => onClick(heritage)}
-      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
+    <div 
+      onClick={() => onClick(item)}
+      className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer overflow-hidden group"
     >
-      <div className="relative h-48 overflow-hidden">
-        <img
-          src={heritage.image || '/src/assets/ukn.png'}
-          alt={heritage.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-        />
-        <div className="absolute top-3 right-3 bg-white px-3 py-1 rounded-full text-xs font-semibold text-red-600">
-          {isPerson ? `${heritage.birthYear} - ${heritage.deathYear}` : heritage.year || 'N/A'}
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-          <h3 className="text-white font-bold text-lg">{heritage.name}</h3>
-        </div>
+      <div className="bg-gradient-to-br from-emerald-100 to-teal-100 p-8 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform">
+        {item.image}
       </div>
-
-      <div className="p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-sm text-gray-500">
-            📍 {heritage.location || heritage.hometown || 'N/A'}
+      <div className="p-5">
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-bold text-lg text-gray-800 flex-1">{item.name}</h3>
+          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getTypeColor(item.type)}`}>
+            {getTypeLabel(item.type)}
           </span>
         </div>
-        <div className="text-sm text-gray-500 mb-2">
-          {heritage.type || heritage.classification || 'N/A'}
+        <div className="flex items-start gap-2 text-sm text-gray-600 mb-2">
+          <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-emerald-600" />
+          <span className="font-medium">{item.commune}</span>
         </div>
-        <p className="text-sm text-gray-600 line-clamp-2">{heritage.description}</p>
-
-        <button className="mt-4 w-full bg-red-50 text-red-600 py-2 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium">
-          Xem chi tiết →
-        </button>
+        <p className="text-sm text-gray-500 mb-2">{item.description}</p>
+        {item.year && (
+          <p className="text-xs text-gray-400">📅 {item.year}</p>
+        )}
+        {item.period && (
+          <p className="text-xs text-gray-400">⏳ {item.period}</p>
+        )}
+        {item.date && (
+          <p className="text-xs text-gray-400">📆 {item.date}</p>
+        )}
       </div>
     </div>
   );

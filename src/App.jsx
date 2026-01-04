@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Send, Loader2, Menu, X, MessageSquare, Home, BookOpen, HelpCircle } from 'lucide-react';
-import { HeritageListPage } from './pages/HeritageList';
+import HeritageListPage from './pages/HeritageList';
 import QuizPage from './pages/QuizPage';
+import TextToSpeechPage from './pages/TTSPage';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { Sidebar } from './components/Sidebar';
@@ -30,11 +31,12 @@ export default function App() {
           onNavigate={navigateTo}
         />
 
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-6 xl:p-8 min-h-0">
+        <main className="flex-1 overflow-y-auto min-h-0">
           <div className="max-w-7xl mx-auto h-full">
             {currentPage === 'heritage' && <HeritageListPage />}
             {currentPage === 'chat' && <ChatPage />}
             {currentPage === 'quiz' && <QuizPage />}
+            {currentPage === 'tts' && <TextToSpeechPage />}
           </div>
         </main>
       </div>

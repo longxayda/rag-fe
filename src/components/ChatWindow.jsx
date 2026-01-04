@@ -34,13 +34,13 @@ export function ChatWindow() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="flex flex-col h-full p-3 sm:p-4 lg:p-6 xl:p-8 bg-white shadow-lg overflow-hidden bg-gradient-to-br from-emerald-50 to-teal-50">
       {/* Chat Header */}
-      <div className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-4 flex items-center gap-3">
+      <div className="bg-gradient-to-r from-emerald-500 to-teal-700 text-white px-6 py-4 flex items-center gap-3">
         <MessageSquare className="w-6 h-6" />
         <div>
           <h2 className="font-semibold text-lg">Trợ lý di sản AI</h2>
-          <p className="text-xs text-red-100">Hỏi tôi về di sản văn hóa tỉnh Cà Mau</p>
+          <p className="text-xs text-emerald-100">Hỏi tôi về di sản văn hóa tỉnh Cà Mau</p>
         </div>
       </div>
 
@@ -80,12 +80,12 @@ export function ChatWindow() {
             onKeyPress={handleKeyPress}
             placeholder="Hỏi về di sản văn hóa..."
             disabled={isStreaming}
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
           <button
             onClick={handleSubmit}
             disabled={isStreaming || !input.trim()}
-            className="bg-red-600 text-white p-3 rounded-full hover:bg-red-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="bg-teal-600 text-white p-3 rounded-full hover:bg-teal-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             {isStreaming ? (
               <Loader2 className="w-5 h-5 animate-spin" />

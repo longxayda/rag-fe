@@ -33,7 +33,7 @@ export function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
             <button
               onClick={() => onNavigate('heritage')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${currentPage === 'heritage'
-                ? 'bg-red-50 text-red-700'
+                ? 'bg-teal-50 text-teal-700'
                 : 'text-gray-700 hover:bg-gray-100'
                 }`}
             >
@@ -43,7 +43,7 @@ export function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
             <button
               onClick={() => onNavigate('chat')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${currentPage === 'chat'
-                ? 'bg-red-50 text-red-700'
+                ? 'bg-teal-50 text-teal-700'
                 : 'text-gray-700 hover:bg-gray-100'
                 }`}
             >
@@ -53,12 +53,22 @@ export function Sidebar({ isOpen, onClose, currentPage, onNavigate }) {
             <button
               onClick={() => onNavigate('quiz')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${currentPage === 'quiz'
-                ? 'bg-red-50 text-red-700'
+                ? 'bg-teal-50 text-teal-700'
                 : 'text-gray-700 hover:bg-gray-100'
                 }`}
             >
               <HelpCircle className="w-5 h-5" />
               <span>Hỏi xoay đáp xoáy</span>
+            </button>
+            <button
+              onClick={() => onNavigate('tts')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${currentPage === 'tts'
+                ? 'bg-teal-50 text-teal-700'
+                : 'text-gray-700 hover:bg-gray-100'
+                }`}
+            >
+              <HelpCircle className="w-5 h-5" />
+              <span>Đọc văn bản</span>
             </button>
           </nav>
         </div>

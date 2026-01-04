@@ -2,7 +2,7 @@ import { Menu, Home, BookOpen, HelpCircle } from 'lucide-react';
 
 export function Header({ onMenuClick }) {
     return (
-        <header className="bg-gradient-to-r from-red-700 to-red-600 text-white shadow-lg flex-shrink-0">
+        <header className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg flex-shrink-0">
             <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     <button
@@ -29,11 +29,11 @@ export function Header({ onMenuClick }) {
                     </a>
                     <a href="#" className="flex items-center gap-2 hover:text-yellow-300 transition-colors text-sm">
                         <BookOpen className="w-4 h-4" />
-                        <span>Di sản</span>
+                        <span>Trò chuyện</span>
                     </a>
                     <a href="#" className="flex items-center gap-2 hover:text-yellow-300 transition-colors text-sm">
                         <HelpCircle className="w-4 h-4" />
-                        <span>Kiểm tra</span>
+                        <span>Hỏi đáp</span>
                     </a>
                 </nav>
             </div>

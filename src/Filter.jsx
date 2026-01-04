@@ -16,7 +16,7 @@ export function HeritageFilter({ activeFilter, onFilterChange, viewMode, onViewM
               key={filter.id}
               onClick={() => onFilterChange(filter.id)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === filter.id
-                ? 'bg-red-600 text-white'
+                ? 'bg-emerald-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
             >
@@ -29,7 +29,7 @@ export function HeritageFilter({ activeFilter, onFilterChange, viewMode, onViewM
         <div className="flex gap-2">
           <button
             onClick={() => onViewModeChange('grid')}
-            className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            className={`p-2 rounded-lg ${viewMode === 'grid' ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             title="Grid View"
           >
@@ -39,7 +39,7 @@ export function HeritageFilter({ activeFilter, onFilterChange, viewMode, onViewM
           </button>
           <button
             onClick={() => onViewModeChange('list')}
-            className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            className={`p-2 rounded-lg ${viewMode === 'list' ? 'bg-emerald-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             title="List View"
           >
