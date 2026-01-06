@@ -1,11 +1,46 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, MapPin, Calendar, Info, Volume2, Pause, Play, Loader, Landmark, Award } from 'lucide-react';
-import DocIframe from './Doc';
+
 export function HeritageDetailModal({ item, onClose }) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [audioError, setAudioError] = useState(false);
     const audioRef = useRef(null);
+
+    // Parse information field to separate text and images
+    const parseInformation = (info) => {
+        if (!info) return { sections: [] };
+        
+        // Use a non-capturing group for the file extension
+        const urlRegex = /https?:\/\/[^\s]+\.(?:jpg|jpeg|png|gif|webp|JPG|JPEG|PNG|GIF|WEBP)/gi;
+        const sections = [];
+        let lastIndex = 0;
+        let match;
+        
+        // Find all image URLs
+        while ((match = urlRegex.exec(info)) !== null) {
+            // Add text before the image URL
+            const textBefore = info.substring(lastIndex, match.index).trim();
+            if (textBefore) {
+                sections.push({ type: 'text', content: textBefore });
+            }
+            
+            // Add the image URL
+            sections.push({ type: 'image', content: match[0] });
+            
+            lastIndex = match.index + match[0].length;
+        }
+        
+        // Add any remaining text after the last image
+        const remainingText = info.substring(lastIndex).trim();
+        if (remainingText) {
+            sections.push({ type: 'text', content: remainingText });
+        }
+        
+        return { sections };
+    };
+
+    const informationData = parseInformation(item.information);
 
     useEffect(() => {
         // Prevent body scroll when modal is open
@@ -14,67 +49,69 @@ export function HeritageDetailModal({ item, onClose }) {
             document.body.style.overflow = 'unset';
             if (audioRef.current) {
                 audioRef.current.pause();
-            }
-            if (window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
+                audioRef.current.currentTime = 0;
             }
         };
     }, []);
 
-    const handlePlayAudio = () => {
-        // Since we don't have actual audio files, we'll use Web Speech API
-        if (window.speechSynthesis.speaking) {
-            if (isPlaying) {
-                window.speechSynthesis.pause();
-                setIsPlaying(false);
-            } else {
-                window.speechSynthesis.resume();
-                setIsPlaying(true);
-            }
+    const handlePlayAudio = async () => {
+        if (!item.audioFile) {
+            setAudioError(true);
             return;
         }
 
+        if (!audioRef.current) return;
+
+        // If audio is already loaded and ready
+        if (audioRef.current.src && !audioRef.current.paused) {
+            audioRef.current.pause();
+            setIsPlaying(false);
+            return;
+        }
+
+        if (audioRef.current.src && audioRef.current.paused) {
+            audioRef.current.play();
+            setIsPlaying(true);
+            return;
+        }
+
+        // Load audio file
         setIsLoading(true);
         setAudioError(false);
 
-        // Create speech synthesis
-        const utterance = new SpeechSynthesisUtterance();
-        utterance.text = `${item.name}. ${item.notes || item.information}`;
-        utterance.lang = 'vi-VN';
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
+        try {
+            // Import the audio file dynamically
+            const audioModule = await import(`../audio/${item.audioFile}`);
+            audioRef.current.src = audioModule.default;
+            
+            audioRef.current.onloadeddata = () => {
+                setIsLoading(false);
+                audioRef.current.play();
+                setIsPlaying(true);
+            };
 
-        // Try to find Vietnamese voice
-        const voices = window.speechSynthesis.getVoices();
-        const vietnameseVoice = voices.find(voice =>
-            voice.lang.includes('vi') || voice.lang.includes('VN')
-        );
-        if (vietnameseVoice) {
-            utterance.voice = vietnameseVoice;
-        }
+            audioRef.current.onended = () => {
+                setIsPlaying(false);
+            };
 
-        utterance.onstart = () => {
-            setIsPlaying(true);
-            setIsLoading(false);
-        };
-
-        utterance.onend = () => {
-            setIsPlaying(false);
-        };
-
-        utterance.onerror = (event) => {
+            audioRef.current.onerror = () => {
+                setAudioError(true);
+                setIsPlaying(false);
+                setIsLoading(false);
+            };
+        } catch (error) {
+            console.error('Error loading audio:', error);
             setAudioError(true);
-            setIsPlaying(false);
             setIsLoading(false);
-            console.error('Speech synthesis error:', event);
-        };
-
-        window.speechSynthesis.speak(utterance);
+        }
     };
 
     const handleStopAudio = () => {
-        window.speechSynthesis.cancel();
-        setIsPlaying(false);
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            setIsPlaying(false);
+        }
     };
 
     const getRankingTypeColor = (rankingType) => {
@@ -181,7 +218,7 @@ export function HeritageDetailModal({ item, onClose }) {
 
                             <div className="flex gap-3">
                                 <button
-                                    onClick={isPlaying ? handlePlayAudio : handlePlayAudio}
+                                    onClick={handlePlayAudio}
                                     disabled={isLoading}
                                     className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all transform hover:scale-105 flex items-center justify-center gap-2 ${isLoading
                                         ? 'bg-gray-300 cursor-not-allowed'
@@ -228,16 +265,35 @@ export function HeritageDetailModal({ item, onClose }) {
 
                     {/* Information Sections */}
                     <div className="space-y-6">
-                        {/* Description */}
-                        {item.notes && (
+                        {/* Description with Text and Images */}
+                        {informationData.sections.length > 0 && (
                             <div>
                                 <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
                                     <Info className="w-5 h-5 text-emerald-600" />
                                     Thông tin chi tiết
                                 </h3>
-                                <p className="text-gray-700 leading-relaxed">
-                                    {item.notes}
-                                </p>
+                                <div className="space-y-4">
+                                    {informationData.sections.map((section, index) => (
+                                        <div key={index}>
+                                            {section.type === 'text' ? (
+                                                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                                                    {section.content}
+                                                </p>
+                                            ) : (
+                                                <div className="rounded-xl overflow-hidden shadow-lg my-4">
+                                                    <img
+                                                        src={section.content}
+                                                        alt={`${item.name} - Hình ${index + 1}`}
+                                                        className="w-full h-auto object-cover"
+                                                        onError={(e) => {
+                                                            e.target.style.display = 'none';
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         )}
 
@@ -271,20 +327,6 @@ export function HeritageDetailModal({ item, onClose }) {
                                 </div>
                             )}
                         </div>
-
-                        {/* Additional Information */}
-                        {item.information && (
-                            <div className="p-4 rounded-xl bg-blue-50 border border-blue-200">
-                                <div className="text-sm text-blue-600 font-semibold mb-2">Thông tin bổ sung</div>
-                                <div className="text-sm text-gray-700">
-                                    {item.information.startsWith('https') ? (
-                                        <DocIframe source={item.information} />
-                                    ) : (
-                                        item.information
-                                    )}
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
 

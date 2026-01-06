@@ -1,4 +1,5 @@
-import { useStreamingChat } from "../hooks/streamingChat";
+// import { useStreamingChat } from "../hooks/streamingChat";
+import { useStreamingChat } from "../hooks/streamingFakeChat";
 import { useState, useRef} from "react";
 
 import { Send, Loader2, Menu, X, MessageSquare, Home, BookOpen, HelpCircle } from 'lucide-react';

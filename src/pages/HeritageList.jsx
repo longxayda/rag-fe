@@ -24,6 +24,14 @@ function normalizeHeritage(item) {
   };
 }
 
+const extractCommune = (address) => {
+  if (!address) return '';
+  // Try to match "xã X" or "phường X" pattern
+  const match = address.match(/(xã|phường)\s+([^,]+)/i);
+  return match ? `${match[1]} ${match[2]}`.trim() : address;
+};
+
+
 const HERITAGE_DATA = heritageData.map(normalizeHeritage)
 
 export default function HeritageListPage() {
@@ -44,10 +52,16 @@ export default function HeritageListPage() {
   const filteredData = useMemo(() => {
     return allData.filter(item => {
       const matchesType = typeFilter === 'all' || item.dataType === typeFilter;
-      const matchesCommune = communeFilter === 'all' || item.commune === communeFilter;
+
+      // Flexible commune matching
+      const itemCommune = extractCommune(item.address);
+      const matchesCommune = communeFilter === 'all' ||
+        item.address.toLowerCase().includes(communeFilter.toLowerCase()) ||
+        itemCommune.toLowerCase().includes(communeFilter.toLowerCase());
+
       const matchesSearch =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.commune.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
 
       return matchesType && matchesCommune && matchesSearch;
@@ -56,9 +70,17 @@ export default function HeritageListPage() {
 
   // Get communes that have data
   const availableCommunes = useMemo(() => {
-    const communesWithData = new Set(allData.map(item => item.commune));
-    return COMMUNES.filter(commune => communesWithData.has(commune));
+    const communesWithData = new Set(
+      allData
+        .map(item => extractCommune(item.address))
+        .filter(Boolean)
+    );
+
+    return COMMUNES.filter(commune =>
+      communesWithData.has(commune)
+    );
   }, [allData]);
+
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
